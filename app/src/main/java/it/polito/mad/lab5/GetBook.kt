@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase
 import it.polito.mad.lab5.Chat.ChatMessage
 import it.polito.mad.lab5.Chat.ChatMessage1
 import it.polito.mad.lab5.SearchBook.SearchBook
+import it.polito.mad.lab5.beans.BookRequestMessage
 import it.polito.mad.lab5.beans.Message
 import kotlinx.android.synthetic.main.top_back.*
 import java.util.*
@@ -149,24 +150,24 @@ class GetBook : AppCompatActivity(), AdapterView.OnItemSelectedListener, View.On
         REQref.child(key).child("copyID").setValue(copyID)
         REQref.child(key).child("status").setValue("pending")
 
-
-        val CHATref : DatabaseReference = FirebaseDatabase.getInstance()
-                .reference
-                .child("chats")
-
-        val chatID = CHATref.push().key.toString()
-        CHATref.child(chatID).child("copyID").setValue(copyID)
-        CHATref.child(chatID).child("ownerID").setValue(ownerID)
-        CHATref.child(chatID).child("otherID").setValue(otherID)
+//
+//        val CHATref : DatabaseReference = FirebaseDatabase.getInstance()
+//                .reference
+//                .child("chats")
+//
+//        val chatID = CHATref.push().key.toString()
+//        CHATref.child(chatID).child("copyID").setValue(copyID)
+//        CHATref.child(chatID).child("ownerID").setValue(ownerID)
+//        CHATref.child(chatID).child("otherID").setValue(otherID)
         try {
             if (msg!!.text != null && !(msg.text.toString().equals(""))) {
                 FirebaseDatabase.getInstance()
-                        .reference
-                        .child("chats")
-                        .child(chatID)
-                        .child("messages")
-                        .push()
-                        .setValue( ChatMessage1(msg.getText().toString(), otherID) )
+//                        .reference
+//                        .child("chats")
+//                        .child(chatID)
+//                        .child("messages")
+//                        .push()
+//                        .setValue( ChatMessage1(msg.getText().toString(), otherID) )
 
                 //this will create message and notification for the user
                 createMessage(msg.getText().toString(),senderUid, receiverUid)
@@ -181,17 +182,38 @@ class GetBook : AppCompatActivity(), AdapterView.OnItemSelectedListener, View.On
             }
 
         } catch (e : Exception) {}
-        REQref.child(key).child("chatID").setValue(chatID)
+//        REQref.child(key).child("chatID").setValue(chatID)
 
         val Uref : DatabaseReference = FirebaseDatabase.getInstance()
                 .reference
                 .child("users")
-        Uref.child(ownerID).child("chats").push().setValue(chatID)
+//        Uref.child(ownerID).child("chats").push().setValue(chatID)
         Uref.child(ownerID).child("receivedRequest").child(key).setValue(key)
 
-        Uref.child(otherID).child("chats").push().setValue(chatID)
+//        Uref.child(otherID).child("chats").push().setValue(chatID)
         Uref.child(otherID).child("sentRequest").child(key).setValue(key)
+
+
+
+        // send notification for get book
+try {
+    val mDatabase = FirebaseDatabase.getInstance().reference
+
+    val bookReqMessage = BookRequestMessage(bookTitle, senderUid, receiverUid, "sasa name")
+    mDatabase
+            .child("notifications")
+            .child("getbook")
+            .push()
+            .setValue(bookReqMessage)
+    Log.i(TAG, "pushed in notifications.messages: $bookReqMessage")
+
+    } catch (e : Exception){}
     }
+
+    // end send notiication
+
+
+
 
     override fun onItemSelected(arg0: AdapterView<*>, arg1: View, position: Int, id: Long) {
                 // use position to know the selected item
@@ -216,14 +238,15 @@ class GetBook : AppCompatActivity(), AdapterView.OnItemSelectedListener, View.On
                 msg,
                 _ownerUid,
                 _userUid,
-                senderName)
+                senderName,
+                false)
         try {
-            mDatabase
-                    .child("notifications")
-                    .child("messages")
-                    .push()
-                    .setValue(message)
-            Log.i(TAG, "pushed in notifications.messages: $message")
+//            mDatabase
+//                    .child("notifications")
+//                    .child("messages")
+//                    .push()
+//                    .setValue(message)
+//            Log.i(TAG, "pushed in notifications.messages: $message")
 
             mDatabase
                     .child("messages")
