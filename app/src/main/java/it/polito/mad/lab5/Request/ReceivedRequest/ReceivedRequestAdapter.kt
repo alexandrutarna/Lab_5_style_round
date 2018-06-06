@@ -3,6 +3,7 @@ package it.polito.mad.lab5.Request.ReceivedRequest
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -12,6 +13,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import it.polito.mad.lab5.R
 import it.polito.mad.lab5.Request.RequestItem
+import it.polito.mad.lab5.beans.StatusMessage
 
 
 class ReceivedRequestAdapter (private val context: Context,
@@ -83,11 +85,50 @@ class ReceivedRequestAdapter (private val context: Context,
             val USERref : DatabaseReference = FirebaseDatabase.getInstance().reference.child("users")
             USERref.child(ri.loanerID).child("canRate").child(ri.ownerID).setValue(ri.ownerID)
             USERref.child(ri.ownerID).child("canRate").child(ri.loanerID).setValue(ri.loanerID)
+
+            // send notification for accepted status
+
+                val mDatabase = FirebaseDatabase.getInstance().reference
+                val msg = StatusMessage(
+                        ri.title,
+                        ri.ownerID,
+                        ri.loanerID,
+                        "accepted" )
+                mDatabase
+                        .child("notifications")
+                        .child("status")
+                        .push()
+                        .setValue(msg)
+
+
+
+            // end send notiication
+
         })
 
         refuse.setOnClickListener(OnClickListener {
             val REQref : DatabaseReference = FirebaseDatabase.getInstance().reference.child("request").child(ri.requestID).child("status")
             REQref.setValue("refused")
+
+            // send notification for refused status
+            try {
+                val mDatabase = FirebaseDatabase.getInstance().reference
+
+                val msg = StatusMessage(
+                        ri.title,
+                        ri.ownerID,
+                        ri.loanerID,
+                        "refused" )
+
+                mDatabase
+                        .child("notifications")
+                        .child("status")
+                        .push()
+                        .setValue(msg)
+
+            } catch (e : Exception){}
+
+            // end send notiication
         })
 
         openchat.setOnClickListener(OnClickListener {

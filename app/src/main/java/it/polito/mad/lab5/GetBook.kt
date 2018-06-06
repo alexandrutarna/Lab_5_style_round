@@ -208,9 +208,10 @@ try {
     Log.i(TAG, "pushed in notifications.messages: $bookReqMessage")
 
     } catch (e : Exception){}
+
+        // end send notiication
     }
 
-    // end send notiication
 
 
 
