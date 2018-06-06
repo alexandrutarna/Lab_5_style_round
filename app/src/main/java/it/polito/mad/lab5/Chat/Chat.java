@@ -104,6 +104,12 @@ public class Chat extends AppCompatActivity implements View.OnClickListener {
                         Long timestamp = issue.child("timestamp").getValue(Long.class);
                         String to = issue.child("to").getValue(String.class);
 
+                        String key = issue.getKey();
+                        if (from!= senderUid){
+
+                        }
+
+
                         boolean seen = false;
 //                    if (checkTime != null) if (checkTime.compareTo(msgt) > 0) seen = true;
 //                    else seen = false;
@@ -111,14 +117,18 @@ public class Chat extends AppCompatActivity implements View.OnClickListener {
                         seen = true;
                         Log.i(TAG, "seen: "+ seen);
 
-                        Message msg = new it.polito.mad.lab5.beans.Message(
+
+
+                        Message msg = new Message(
                                 timestamp,
                                 negatedTimestamp,
                                 dayTimestamp,
                                 body,
                                 from,
-                                to
+                                to,
+                                seen
                         );
+
 
                         chatMessagesList.add(new ChatMessage(msg,senderUid,seen));
 
@@ -169,14 +179,15 @@ public class Chat extends AppCompatActivity implements View.OnClickListener {
         long timestamp = new Date().getTime();
         long dayTimestamp = getDayTimestamp(timestamp);
 
-        it.polito.mad.lab5.beans.Message message =
-                new it.polito.mad.lab5.beans.Message(timestamp,
+        Message message =
+                new Message(timestamp,
                         -timestamp,
                         dayTimestamp,
                         msg,
                         _ownerUid,
                         _userUid,
-                        senderName);
+                        senderName,
+                        false);
         mDatabase
                 .child("notifications")
                 .child("messages")

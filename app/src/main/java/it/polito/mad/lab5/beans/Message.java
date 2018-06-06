@@ -10,14 +10,23 @@ public class Message {
     private String from;
     private String to;
     private String senderName;
+    private Boolean seen;
 
-    public Message(long timestamp, long negatedTimestamp, long dayTimestamp, String body, String from, String to) {
+
+    public Message(long timestamp,
+                   long negatedTimestamp,
+                   long dayTimestamp,
+                   String body,
+                   String from,
+                   String to,
+                   Boolean seen) {
         this.timestamp = timestamp;
         this.negatedTimestamp = negatedTimestamp;
         this.dayTimestamp = dayTimestamp;
         this.body = body;
         this.from = from;
         this.to = to;
+        this.seen = seen;
     }
 
     public Message(long timestamp,
@@ -26,7 +35,8 @@ public class Message {
                    String body,
                    String from,
                    String to,
-                   String sender) {
+                   String sender,
+                   Boolean seen) {
         this.timestamp = timestamp;
         this.negatedTimestamp = negatedTimestamp;
         this.dayTimestamp = dayTimestamp;
@@ -34,6 +44,8 @@ public class Message {
         this.from = from;
         this.to = to;
         this.senderName = sender;
+        this.seen = seen;
+
     }
     public Message() {
     }
@@ -64,6 +76,14 @@ public class Message {
 
     public String getSenderName() { return senderName; }
 
+    public Boolean getSeen() {
+        return seen;
+    }
+
+    public void setSeen(Boolean seen) {
+        this.seen = seen;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -74,6 +94,7 @@ public class Message {
                 ", from='" + from + '\'' +
                 ", to='" + to + '\'' +
                 ", senderName='" + senderName + '\'' +
+                ", seen=" + seen +
                 '}';
     }
 }
