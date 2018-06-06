@@ -2,6 +2,10 @@ package it.polito.mad.lab5.Chat;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +24,10 @@ import it.polito.mad.lab5.R;
  */
 
 public class ChatAdapter extends ArrayAdapter<ChatMessage> {
+    // for logging ---------------------------------------
+    String className = this.getClass().getSimpleName();
+    String TAG = "--- " + className + " --- ";
+    // ---------------------------------------------------
 
     public ChatAdapter(Context context, ArrayList<ChatMessage> msg) {
         super(context, 0, msg);
@@ -33,7 +41,19 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         Timestamp stamp = new Timestamp(msg.message.getTimestamp());
         Date date = new Date(stamp.getTime());
 
+        Log.i(TAG, "message: " + msg.message.getBody());
+        Log.i(TAG, "date: " + date.toString().substring(11,16));
+
         String str = msg.message.getBody() + "\n" + date.toString().substring(11,16);
+        int lenMsg = msg.message.getBody().length();
+        SpannableString ss1=  new SpannableString(str);
+        ss1.setSpan(new RelativeSizeSpan(0.8f), 0,lenMsg, 0); // set size
+        ss1.setSpan(new ForegroundColorSpan(Color.BLACK), 0, lenMsg, 0);// set color
+
+
+        ss1.setSpan(new RelativeSizeSpan(0.5f), lenMsg, ss1.length(), 0); // set size
+        ss1.setSpan(new ForegroundColorSpan(Color.GRAY), lenMsg, ss1.length(), 0);// set color
+
         TextView text = null;
 
         // Check if an existing view is being reused, otherwise inflate the view
@@ -41,17 +61,18 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         if (msg.message.getFrom().equals(msg.getuID())) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_right, parent, false);
             text = (TextView) convertView.findViewById(R.id.msg_text_r);
-        } else {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_left, parent, false);
-            text = (TextView) convertView.findViewById(R.id.msg_text_l);
             if (msg.getSeen()) {
                 ImageView seen = (ImageView) convertView.findViewById(R.id.seen);
                 seen.setVisibility(View.VISIBLE);
-                seen.setColorFilter(Color.WHITE);
+                seen.setColorFilter(Color.BLUE);
             }
+        } else {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.message_left, parent, false);
+            text = (TextView) convertView.findViewById(R.id.msg_text_l);
+
         }
 
-        text.setText(str);
+        text.setText(ss1);
 
 
         /*

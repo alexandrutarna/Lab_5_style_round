@@ -1,5 +1,6 @@
 package it.polito.mad.lab5.Chat;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +35,7 @@ import it.polito.mad.lab5.R;
 import it.polito.mad.lab5.SearchBook.Book;
 import it.polito.mad.lab5.SearchBook.BookAdapter;
 import it.polito.mad.lab5.beans.Message;
+import it.polito.mad.lab5.fcm.MessagingService;
 
 public class Chat extends AppCompatActivity implements View.OnClickListener {
 
@@ -93,6 +95,26 @@ public class Chat extends AppCompatActivity implements View.OnClickListener {
 
                 ArrayList<ChatMessage> chatMessagesList = new ArrayList<ChatMessage>();
 
+                // update stats in receiver messages
+                DatabaseReference msgListRef = FirebaseDatabase.getInstance().getReference().child("messages").child(receiverUid).child(senderUid);
+                try {
+                    for (DataSnapshot issue : dataSnapshot.child("messages").child(receiverUid).child(senderUid).getChildren()) {
+                        String from = issue.child("from").getValue(String.class);
+                        String key = issue.getKey();
+                        if ((!from.equals(senderUid))){
+                            Log.i(TAG, "seen before: " + issue.child("seen").getValue(Boolean.class));
+                            msgListRef.child(key).child("seen").setValue(true);
+                            Log.i(TAG, "seen after: " + issue.child("seen").getValue(Boolean.class));
+                        }
+
+
+                    }
+                } catch(NullPointerException e){
+                    Log.i(TAG, "There are no messages in the DB yet or a refference problem");
+                    e.printStackTrace();
+                }
+                //  seen status end
+
                 try {
                     for (DataSnapshot issue : dataSnapshot.child("messages").child(senderUid).child(receiverUid).getChildren()) {
 
@@ -103,19 +125,9 @@ public class Chat extends AppCompatActivity implements View.OnClickListener {
                         Long negatedTimestamp = issue.child("negatedTimestamp").getValue(Long.class);
                         Long timestamp = issue.child("timestamp").getValue(Long.class);
                         String to = issue.child("to").getValue(String.class);
+                        Boolean seen = issue.child("seen").getValue(Boolean.class);
+                        Log.i(TAG, "seen in chat: " + seen);
 
-                        String key = issue.getKey();
-                        if (from!= senderUid){
-
-                        }
-
-
-                        boolean seen = false;
-//                    if (checkTime != null) if (checkTime.compareTo(msgt) > 0) seen = true;
-//                    else seen = false;
-
-                        seen = true;
-                        Log.i(TAG, "seen: "+ seen);
 
 
 
@@ -150,6 +162,11 @@ public class Chat extends AppCompatActivity implements View.OnClickListener {
 
             }
         });
+
+
+//        Intent serviceintent = new Intent("it.polito.mad.lab5.MessagingService");
+//        intent.putExtra("MyService.data", "myValue");
+//        startService(serviceintent);
     }
 
 
