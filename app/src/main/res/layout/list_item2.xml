@@ -6,7 +6,7 @@
     android:orientation="horizontal" >
 
 
-    <ImageView
+    <it.polito.mad.lab5.RoundedImageView
         android:id="@+id/bookImage"
         android:layout_width="75dp"
         android:layout_height="75dp"
