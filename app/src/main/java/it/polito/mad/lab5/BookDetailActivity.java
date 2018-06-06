@@ -42,7 +42,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private String copyID;
     private String ownerID;
     private String title;
-
+    private String uID;
 
 
 //    private TextView tvPageCount;
@@ -52,6 +52,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
+
+        final SharedPreferences sharedPref = getSharedPreferences("shared_id", Context.MODE_PRIVATE);
+        uID = sharedPref.getString("uID",null);
 
         Intent intent = getIntent();
         Log.i(TAG, "Intent received");
@@ -110,6 +113,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         intent.putExtra("copyID", copyID);
         intent.putExtra("ownerID", ownerID);
         intent.putExtra("title", title);
+        intent.putExtra("senderName", ownerID);
 
         startActivity(intent);
     }
@@ -117,26 +121,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     private void goToChat() {
 
-        final SharedPreferences sharedPref = getSharedPreferences("shared_id", Context.MODE_PRIVATE);
-        String uID = sharedPref.getString("uID",null);
-
-
-        final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-        final String chatID = dbRef.child("chats").push().getKey();        // create chat
-
-        dbRef.child("chats").child(chatID).child("copyID").setValue(copyID);        // put copy on database
-        dbRef.child("chats").child(chatID).child("ownerID").setValue(ownerID);
-        dbRef.child("chats").child(chatID).child("otherID").setValue(uID);
-
-        dbRef.child("users").child(uID).child("chats").push().setValue(chatID);      // save chatID in your profile
-
-        dbRef.child("users").child(ownerID).child("chats").push().setValue(chatID);  // save chatID in book owner's profile
-
-
         Intent intent = new Intent();
         intent.setClass(this, Chat.class);
-        intent.putExtra("chatID", chatID);
-
+        intent.putExtra("otherUid", ownerID);
         startActivity(intent);
     }
 

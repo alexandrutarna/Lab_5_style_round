@@ -91,7 +91,8 @@ class ReceivedRequestAdapter (private val context: Context,
         })
 
         openchat.setOnClickListener(OnClickListener {
-            intent.putExtra("chatID", ri.chatID)
+//            intent.putExtra("chatID", ri.chatID)
+            intent.putExtra("otherUid", ri.loanerID)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         })
@@ -102,7 +103,8 @@ class ReceivedRequestAdapter (private val context: Context,
         } )
 
         msg.setOnClickListener(OnClickListener {
-            intent.putExtra("chatID", ri.chatID)
+//            intent.putExtra("chatID", ri.chatID)
+            intent.putExtra("otherUid", ri.loanerID)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         })

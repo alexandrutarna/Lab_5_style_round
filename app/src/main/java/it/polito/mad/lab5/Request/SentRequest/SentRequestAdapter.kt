@@ -98,14 +98,16 @@ class SentRequestAdapter (private val context: Context,
 
 
         openchat_left.setOnClickListener(OnClickListener {
-            intent.putExtra("chatID", ri.chatID)
+//            intent.putExtra("chatID", ri.chatID)
+            intent.putExtra("otherUid", ri.ownerID)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         })
 
 
         openchat_right.setOnClickListener(OnClickListener {
-            intent.putExtra("chatID", ri.chatID)
+//            intent.putExtra("chatID", ri.chatID)
+            intent.putExtra("otherUid", ri.ownerID)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         })
